@@ -1,7 +1,5 @@
 static USER_AGENT: &str = "User-Agent: mite.app/v1.1 (https://github.com/yolk); mite-rs/0.0.1";
 
-use std::process::exit;
-
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -166,6 +164,7 @@ fn main() {
     }
     let time_entry = TimeEntry::new(hours, project, service, note);
 
+    print!("\nSubmitting...");
     let res = client
         .post("https://simplabs.mite.yo.lk/time_entries.json")
         .json(&time_entry)
@@ -175,7 +174,7 @@ fn main() {
         let json = res.json::<Value>().unwrap();
         let entry = &json["time_entry"];
         println!(
-            "{}\n{} / {} / {}\t\t{}h",
+            "\n{}\n{} / {} / {}\t\t{}h",
             entry["date_at"].as_str().unwrap(),
             entry["customer_name"].as_str().unwrap(),
             entry["project_name"].as_str().unwrap(),
