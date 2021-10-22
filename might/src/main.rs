@@ -68,6 +68,7 @@ type Services = Vec<Service>;
 
 fn main() {
     let api_key = std::env::var("MITE_API_KEY").unwrap();
+    let domain = std::env::var("MITE_DOMAIN").unwrap();
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(
         "X-MiteApiKey",
@@ -81,7 +82,7 @@ fn main() {
         .unwrap();
 
     let res: Customers = client
-        .get("https://simplabs.mite.yo.lk/customers.json")
+        .get(format!("https://{}.mite.yo.lk/customers.json", domain))
         .send()
         .unwrap()
         .json()
@@ -95,7 +96,7 @@ fn main() {
     let customer = res.get(selection).unwrap();
 
     let res: Projects = client
-        .get("https://simplabs.mite.yo.lk/projects.json")
+        .get(format!("https://{}.mite.yo.lk/projects.json", domain))
         .send()
         .unwrap()
         .json::<Vec<Project>>()
@@ -112,7 +113,7 @@ fn main() {
     let project = res.get(selection).unwrap();
 
     let res: Services = client
-        .get("https://simplabs.mite.yo.lk/services.json")
+        .get(format!("https://{}.mite.yo.lk/services.json", domain))
         .send()
         .unwrap()
         .json()
@@ -166,7 +167,7 @@ fn main() {
 
     print!("\nSubmitting...");
     let res = client
-        .post("https://simplabs.mite.yo.lk/time_entries.json")
+        .post(format!("https://{}.mite.yo.lk/time_entries.json", domain))
         .json(&time_entry)
         .send()
         .unwrap();
