@@ -8,6 +8,12 @@ struct CustomerFields {
     id: u32,
     name: String,
     archived: bool,
+    created_at: String,
+    hourly_rate: u32,
+    note: String,
+    updated_at: String,
+    active_hourly_rate: String,
+    hourly_rates_per_service: Vec<u32>
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -81,19 +87,27 @@ fn main() {
         .build()
         .unwrap();
 
-    let res: Customers = client
+    let res = client
         .get(format!("https://{}.mite.yo.lk/customers.json", domain))
         .send()
-        .unwrap()
-        .json()
         .unwrap();
+
+    let customers: Customers;
+    
+    if res.status().is_success() {
+        customers = res.json().unwrap();
+        println!("{:?}", customers);
+    } else {
+        panic!("{} Failed to get customers", res.status());
+    }
+
     let selection = dialoguer::Select::new()
         .with_prompt("Select customer")
-        .items(&res)
+        .items(&customers)
         .default(0)
         .interact()
         .unwrap();
-    let customer = res.get(selection).unwrap();
+    let customer = customers.get(selection).unwrap();
 
     let res: Projects = client
         .get(format!("https://{}.mite.yo.lk/projects.json", domain))
